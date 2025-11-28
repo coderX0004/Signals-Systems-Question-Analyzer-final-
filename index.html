@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Signals & Systems Question Analyzer (Enhanced)</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- KaTeX CSS for mathematical notation -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.css"
+        xintegrity="sha384-wn5S2PjC7/s0vN49M9SjT9O43vI5F/L1+8f9/j1x1w2j+n9G6l5BfP/K3C4A5A5J5I5" crossorigin="anonymous">
+    <!-- KaTeX JS for mathematical notation rendering -->
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.js"
+        xintegrity="sha384-wn5S2PjC7/s0vN49M9SjT9O43vI5F/L1+8f9/j1x1w2j+n9G6l5BfP/K3C4A5A5J5I5"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/contrib/auto-render.min.js"
+        xintegrity="sha384-yqPuS0k5g1f2s3k6C+l+6u6FpQ/8y75K5x/P6J6C5O5fP/K3C4A5A5J5I5" crossorigin="anonymous" onload="document.querySelectorAll('.math-element').forEach(el => renderMathInElement(el, {
+        delimiters: [
+            {left: '$$', right: '$$', display: true},
+            {left: '$', right: '$', display: false}
+        ],
+        throwOnError: false
+    }));"></script>
+
+    <style>
+        /* Base styles for smooth transitions and Inter Font (Used by default in Tailwind) */
+        body {
+            transition: background-color 0.5s, color 0.5s;
+            font-family: 'Inter', sans-serif;
+        }
+
+        * {
+            transition: background-color 0.5s, color 0.5s, border-color 0.5s, box-shadow 0.5s, transform 0.2s;
+        }
+
+        /* Variable Definitions for Theming */
+        .theme-black {
+            --bg-main: #0a0a0a;
+            --bg-nav: #000000;
+            --bg-card: #1f2937;
+            /* Gray-800 */
+            --bg-sidebar: #111827;
+            /* Gray-900 */
+            --text-main: #ffffff;
+            --accent-color: #6366f1;
+            /* Indigo-500, brighter */
+            --border-color: #374151;
+            /* Gray-700 */
+            --important-ring: #fcd34d;
+            /* Amber-300 */
+            --important-bg: #451a03;
+            /* Amber-950/50 */
+            --important-text-bg: #fcd34d;
+        }
+
+        .theme-red {
+            --bg-main: #fef2f2;
+            /* Red-50 */
+            --bg-nav: #b91c1c;
+            /* Red-700 */
+            --bg-card: #ffffff;
+            --bg-sidebar: #fee2e2;
+            /* Red-100 */
+            --text-main: #1f2937;
+            /* Gray-800 */
+            --accent-color: #ef4444;
+            /* Red-500 */
+            --border-color: #fecaca;
+            /* Red-200 */
+            --important-ring: #b91c1c;
+            /* Red-700 */
+            --important-bg: #fef9c3;
+            /* Yellow-100 */
+            --important-text-bg: #b91c1c;
+        }
+
+        .theme-light {
+            --bg-main: #ffffff;
+            --bg-nav: #1f2937;
+            /* Gray-800 */
+            --bg-card: #f9fafb;
+            /* Gray-50 */
+            --bg-sidebar: #e5e7eb;
+            /* Gray-200 */
+            --text-main: #1f2937;
+            /* Gray-800 */
+            --accent-color: #3b82f6;
+            /* Blue-500 */
+            --border-color: #d1d5db;
+            /* Gray-300 */
+            --important-ring: #3b82f6;
+            /* Blue-500 */
+            --important-bg: #dbeafe;
+            /* Blue-100 */
+            --important-text-bg: #3b82f6;
+        }
+
+        /* Utility Class Mappings */
+        .bg-main {
+            background-color: var(--bg-main);
+        }
+
+        .bg-nav {
+            background-color: var(--bg-nav);
+        }
+
+        .bg-card {
+            background-color: var(--bg-card);
+        }
+
+        .bg-sidebar {
+            background-color: var(--bg-sidebar);
+        }
+
+        .text-main {
+            color: var(--text-main);
+        }
+
+        .bg-accent {
+            background-color: var(--accent-color);
+        }
+
+        .text-accent {
+            color: #ffffff;
+        }
+
+        /* Always white text on accent background for contrast */
+        .border-card {
+            border-color: var(--border-color);
+        }
+
+        .ring-important {
+            box-shadow: 0 0 0 3px var(--important-ring);
+        }
+
+        .bg-important {
+            background-color: var(--important-bg);
+        }
+
+        .text-important-fg {
+            color: var(--important-text-bg);
+        }
+
+        /* Enhanced Card Shadow */
+        .shadow-custom {
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+
+        /* KaTeX specific adjustment for better alignment and display mode */
+        /* Note: Using KaTeX Auto-Render extension now, simplifying manual rendering */
+        .katex-display>.katex {
+            margin: 0.5em 0 !important;
+        }
+
+        .question-text p {
+            /* Ensures proper spacing for blocks of text containing inline and display math */
+            margin-bottom: 0.5rem;
+        }
+    </style>
+</head>
+
+<body class="theme-black bg-main min-h-screen">
+    <!-- Navbar -->
+    <nav id="navbar" class="sticky top-0 z-20 shadow-2xl bg-nav p-4 sm:p-5">
+        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-4">
+            <h1 class="text-2xl font-extrabold tracking-tight text-white flex-shrink-0">
+                Signals & Systems Analyzer
+            </h1>
+            <div class="flex w-full sm:w-auto space-x-3 items-center">
+                <!-- Search Bar -->
+                <div class="relative flex-grow">
+                    <input type="text" id="search-input" placeholder="Search keywords or IDs..."
+                        class="w-full sm:w-80 p-2 pl-10 rounded-lg text-sm transition-all duration-300 bg-card text-main placeholder-gray-400 focus:ring-2 focus:ring-opacity-70 focus:ring-[var(--accent-color)]" />
+                    <!-- Search Icon (SVG) -->
+                    <svg class="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-main opacity-60"
+                        fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
+                </div>
+
+                <!-- Theme Toggle Button -->
+                <button id="theme-toggle"
+                    class="p-3 rounded-full transition-all duration-300 shadow-lg bg-accent text-accent hover:brightness-110 active:scale-95 flex items-center justify-center"
+                    aria-label="Toggle Theme">
+                    <!-- Palette Icon (SVG) -->
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M7 11.5V11m0 0v-1m0 1h-1m1 0h1m-1 3.5v-1m0 0v-1m0 1h-1m1 0h1m-1 3.5v-1m0 0v-1m0 1h-1m1 0h1m-1 3.5v-1m0 0v-1m0 1h-1m1 0h1m8-10.5h-2.5a3 3 0 00-3-3v-2.5h-10v10h10v2.5a3 3 0 003 3h2.5v-10zm-3 7.5v-5h2.5v5h-2.5z">
+                        </path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content Grid -->
+    <main class="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
+        <div class="grid grid-cols-1 md:grid-cols-[280px_1fr] gap-6">
+
+            <!-- Filter Sidebar (Hidden on Mobile, Block on Tablet/Desktop) -->
+            <div id="filter-sidebar" class="md:block bg-sidebar p-5 rounded-xl shadow-custom h-fit sticky top-24">
+                <h3 class="text-xl font-bold mb-4 border-b pb-2 text-main border-card">Filter Options</h3>
+
+                <!-- Filter by Marks -->
+                <div class="mb-5">
+                    <label for="marks-filter" class="block text-sm font-medium mb-2 text-main opacity-80">Filter by
+                        Marks</label>
+                    <select id="marks-filter"
+                        class="w-full p-2.5 rounded-lg text-sm bg-card text-main border border-card focus:ring-2 focus:ring-[var(--accent-color)]">
+                        <option value="all">All Marks</option>
+                        <!-- Options populated by JS -->
+                    </select>
+                </div>
+
+                <!-- Filter by Semester -->
+                <div class="mb-5">
+                    <label for="semester-filter" class="block text-sm font-medium mb-2 text-main opacity-80">Filter by
+                        Semester</label>
+                    <select id="semester-filter"
+                        class="w-full p-2.5 rounded-lg text-sm bg-card text-main border border-card focus:ring-2 focus:ring-[var(--accent-color)]">
+                        <option value="all">All Semesters</option>
+                        <!-- Options populated by JS -->
+                    </select>
+                </div>
+
+                <div class="mb-5 p-3 rounded-lg border border-dashed border-card">
+                    <p class="text-sm font-semibold text-important-fg">
+                        <svg class="w-4 h-4 inline-block mr-1 align-sub fill-current" viewBox="0 0 24 24"
+                            fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                            <path
+                                d="M12 2l3.09 6.26l6.91 1l-5 4.87l1.18 6.88l-6.18-3.25l-6.18 3.25l1.18-6.88l-5-4.87l6.91-1z" />
+                        </svg>
+                        Important questions are highlighted with a border.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Question Cards Area -->
+            <div>
+                <h2 id="results-title" class="text-3xl font-bold mb-6 text-main">
+                    All Questions
+                </h2>
+                <div id="questions-container" class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <!-- Question Cards will be injected here -->
+                </div>
+                <div id="no-results"
+                    class="hidden p-12 text-center rounded-xl bg-card text-main opacity-70 mt-6 shadow-custom">
+                    <p class="text-xl font-semibold">No questions found.</p>
+                    <p class="mt-2 text-sm">Adjust your filters or search keywords and try again.</p>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <script>
+        // --- QUESTION DATA EXTRACTED FROM PDF ---
+        const initialQuestions = [
+            // Common/Repeated Questions (3)
+            {
+                id: "Q-2",
+                text: "Determine the response of the LTI system whose input $x[n]$ and impulse response $h[n]$ are given by, $x[n] = \\{1, 2, 3, 1\\}$ and $h[n] = \\{1, 2, 1, -1\\}$.",
+                marks: 10,
+                is_common_important: true,
+                all_semesters: ["Autumn 2024", "Spring 2024"],
+            },
+            {
+                id: "Q-3",
+                text: "Determine the inverse unilateral Laplace transform of $X(s)=\\frac{2s^{3}-9s^{2}+4s+10}{s^{2}-3s-4}$.",
+                marks: 10,
+                is_common_important: true,
+                all_semesters: ["Autumn 2024", "Spring 2024"],
+            },
+            {
+                id: "Q-4",
+                text: "Determine the Laplace transform of $x(t) = e^{at}u(t)$ and depict the ROC and the locations of poles and zeros in the s-plane. Assuming that $a$ is real.",
+                marks: 10,
+                is_common_important: true,
+                all_semesters: ["Autumn 2024", "Spring 2024"],
+            },
+            // Unique Questions (35)
+            // Spring 2025
+            { id: "Q-6", text: "Determine the natural response for the LTI systems described by the following differential equation: $\\frac{d^2y(t)}{dt^2} + 4y(t) = 3\\frac{dx(t)}{dt}$ with initial conditions $y(0) = -1$, $\\frac{dy(t)}{dt}|_{t=0} = 1$.", marks: 4, is_common_important: false, all_semesters: ["Spring 2025"] },
+            { id: "Q-7", text: "Determine the total output of the LTI systems described by the following differential equation: $\\frac{d^2y(t)}{dt^2} + 3\\frac{dy(t)}{dt} + 2y(t) = 2x(t)$, with initial conditions $y(0) = -1$, $\\frac{dy(t)}{dt}|_{t=0} = 1$ and input $x(t) = \\cos(t)u(t)$.", marks: 6, is_common_important: false, all_semesters: ["Spring 2025"] },
+            { id: "Q-8", text: "Determine the Fourier transform of the following continuous time domain signals: $x(t) = e^{-at} \\cos(\\Omega_{0}t)u(t)$.", marks: 5, is_common_important: false, all_semesters: ["Spring 2025"] },
+            { id: "Q-9", text: "Compute the DFT of the sequence, $x[n] = \\{0, 1, 2, 3\\}$. Sketch the magnitude and phase spectrum.", marks: 5, is_common_important: false, all_semesters: ["Spring 2025"] },
+            { id: "Q-34", text: "Determine the Fourier transform of the triangular pulse shown in Figure-Q2.a.1.", marks: 5, is_common_important: false, all_semesters: ["Spring 2025"] },
+            { id: "Q-10", text: "Compute circular convolution of the following two sequences using DFT. $x_1[n] = \\{2, 1, 2, 1\\}$ and $x_2[n] = \\{1, 2, 3, 4\\}$.", marks: 5, is_common_important: false, all_semesters: ["Spring 2025"] },
+            { id: "Q-38", text: "The Fourier transform of the signal shown in fig.Q3.a.1 is $X(j\\Omega_{0})=\\frac{1}{\\Omega_{0}^{2}}(e^{-j\\Omega_{0}}-j\\Omega e^{j\\Omega_{0}}-1)$. Using the properties of Fourier transform, find the Fourier transform of the signal shown in fig.Q3.a.2 and fig.Q3.a.3.", marks: 4, is_common_important: false, all_semesters: ["Spring 2025"] },
+            { id: "Q-11", text: "Determine the inverse Fourier transform of the following function, using partial fraction expansion technique: $X(j\\Omega_{0})=\\frac{3(j\\Omega_{0})+14}{(j\\Omega_{0})^{2}+7(j\\Omega_{0})+12}$.", marks: 6, is_common_important: false, all_semesters: ["Spring 2025"] },
+            { id: "Q-5", text: "Determine the convolution of $x_1(t) = e^{-2t}u(t)$ and $x_2(t) = e^{-6t}u(t)$, using Fourier transform.", marks: 5, is_common_important: false, all_semesters: ["Spring 2025"] },
+            { id: "Q-35", text: "Determine the Fourier transform of the periodic pulse function depicted in fig.Q4.b.1.", marks: 5, is_common_important: false, all_semesters: ["Spring 2025"] },
+            { id: "Q-12", text: "Determine the Laplace transform and depict the Region of Convergence (ROC) of the continuous time signal, $x(t) = e^{-4|t|}$.", marks: 5, is_common_important: false, all_semesters: ["Spring 2025"] },
+            { id: "Q-36", text: "Determine the Laplace transform of the signal depicted in fig Q5.b.1.", marks: 5, is_common_important: false, all_semesters: ["Spring 2025"] },
+            { id: "Q-13", text: "Determine the Laplace transform of the signal, $x(t) = \\cosh(\\Omega_{0}t)u(t)$ for $t \\ge 0$.", marks: 5, is_common_important: false, all_semesters: ["Spring 2025"] },
+            { id: "Q-37", text: "Determine the Laplace transform of the signal depicted in fig Q5.b.2.", marks: 5, is_common_important: false, all_semesters: ["Spring 2025"] },
+
+            // Autumn 2024
+            { id: "Q-1", text: "Determine the forced response of the system described by the equation, $5\\frac{dy(t)}{dt} + 10y(t) = 2x(t)$, for the input, $x(t) = 2u(t)$.", marks: 10, is_common_important: false, all_semesters: ["Autumn 2024"] },
+            { id: "Q-39", text: "Find out the convolution output, $y(t)$, by performing convolution of signal $x(t)$ with $h(t)$, where $T_1 = 2T_2$. (Implies graphical convolution, see figure)", marks: 10, is_common_important: false, all_semesters: ["Autumn 2024"] },
+            { id: "Q-14", text: "Find Fourier transform of the following signal $x(t) = e^{-at}u(t)$, $a>0$. Then find the Fourier transform of $y(t) = x(2t-3)$.", marks: 10, is_common_important: false, all_semesters: ["Autumn 2024"] },
+            { id: "Q-15", text: "Find the Fourier series to represent $f(x) = x^2$ in the interval $(0, 2\\pi)$.", marks: 7, is_common_important: false, all_semesters: ["Autumn 2024"] },
+            { id: "Q-16", text: "Explain the significance of the Fourier Series and Fourier transform in the real-life system.", marks: 3, is_common_important: false, all_semesters: ["Autumn 2024"] },
+
+            // Spring 2024
+            { id: "Q-18", text: "Construct the block diagram and signal flow graph of the system described by the following equation: $\\frac{d^2y(t)}{dt^2} + 2\\frac{dy(t)}{dt} + 3y(t) = 4\\frac{dx(t)}{dt} + 5x(t)$.", marks: 5, is_common_important: false, all_semesters: ["Spring 2024"] },
+            { id: "Q-19", text: "Determine the natural response of the system described by the equation: $\\frac{d^2y(t)}{dt^2} + 6\\frac{dy(t)}{dt} + 5y(t) = \\frac{dx(t)}{dt} + 4x(t)$, with initial conditions $y(0) = 1$ and $\\frac{dy(t)}{dt}|_{t=0} = -2$.", marks: 5, is_common_important: false, all_semesters: ["Spring 2024"] },
+            { id: "Q-17", text: "What is convolution? Find out the convolution output, $y(t)$, by performing convolution of signal $x_1(t)$ with $x_1(t)$ where $T_2 = 2T_1$. (Implies graphical convolution, see figure)", marks: 10, is_common_important: false, all_semesters: ["Spring 2024"] },
+            { id: "Q-20", text: "Find the Fourier Transform (FT) of the system output $Y(j\\omega)$ for the following inputs and system impulse response: $x(t) = 3e^{-t}u(t)$ and $h(t) = 2e^{-2t}u(t)$.", marks: 5, is_common_important: false, all_semesters: ["Spring 2024"] },
+            { id: "Q-21", text: "Find the Fourier transform of the following signal by the linearity property of the Fourier representation: $x(t) = 2e^{-t}u(t) - 3e^{-2t}u(t)$.", marks: 5, is_common_important: false, all_semesters: ["Spring 2024"] },
+            { id: "Q-22", text: "Find the Fourier Transform of the following signals: (I) $x(t) = \\frac{d}{dt}e^{-2t}u(t)$ (Use differentiation property) (II) $x(t) = e^{-2t}u(t-3)$ (Use time-shifting property).", marks: 10, is_common_important: false, all_semesters: ["Spring 2024"] },
+
+            // Spring 2023
+            { id: "Q-23", text: "Express the operator that describes the input - output relation $y[n]=\\frac{1}{5}(x[n+4]+x[n+3])+\\frac{2}{3}(x[n+2]+x[n+1])+x[n] +\\frac{1}{5}(x[n-4]+x[n-3])+\\frac{2}{3}(x[n-2]+x[n-1])$ In terms of the time shift operator $S$. Also develop a block diagram representation for it.", marks: 6, is_common_important: false, all_semesters: ["Spring 2023"] },
+            { id: "Q-24", text: "Construct the block diagram and signal flow graph of the system described by the following equation: $3\\frac{d^3y(t)}{dt^3} + \\frac{1}{2}\\frac{d^2y(t)}{dt^2} + \\frac{1}{3}\\frac{dy(t)}{dt} + y(t) = \\frac{3}{2}\\frac{d^2x(t)}{dt^2} + \\frac{2}{3}\\frac{dx(t)}{dt} + x(t)$.", marks: 4, is_common_important: false, all_semesters: ["Spring 2023"] },
+            { id: "Q-25", text: "State whether the following systems are time invariant or variant: i. $y(t)=x(t)\\sin(20\\pi t)$ ii. $y(t)=x(t)+\\int x(t)dt$.", marks: 6, is_common_important: false, all_semesters: ["Spring 2023"] },
+            { id: "Q-26", text: "Test the following system for linearity: $\\frac{d^2y(t)}{dt^2} + 2\\frac{dy(t)}{dt} + 3y(t) = x(t)$.", marks: 4, is_common_important: false, all_semesters: ["Spring 2023"] },
+            { id: "Q-27", text: "Test the casuality or noncausal of the following systems: i. $y(t)=x(t)+2x(3-t)$ ii. $y(t)=x(t)+\\int_{0}^{t}x(\\lambda)d\\lambda$.", marks: 6, is_common_important: false, all_semesters: ["Spring 2023"] },
+            { id: "Q-28", text: "Test the stability of the LTI systems, whose impulse responses are given below: $h(t)=e^{-t}+\\sin t u(t)$.", marks: 4, is_common_important: false, all_semesters: ["Spring 2023"] },
+            { id: "Q-29", text: "Determine the response of the LTI system whose input $x[n]$ and impulse response $h[n]$ are given by the following figures (discrete-time convolution, see figure).", marks: 10, is_common_important: false, all_semesters: ["Spring 2023"] },
+            { id: "Q-30", text: "Consider a Continuous time System and Impulse Response $h(t)$. Find the Output of the System for an Input $x(t)$ (Graphical convolution 1, see figure).", marks: 5, is_common_important: false, all_semesters: ["Spring 2023"] },
+            { id: "Q-31", text: "Consider a Continuous time System and Impulse Response $h(t)$. Find the Output of the System for an Input $x(t)$ (Graphical convolution 2, see figure).", marks: 5, is_common_important: false, all_semesters: ["Spring 2023"] },
+            { id: "Q-32", text: "Determine the trigonometric form of Fourier series of the waveform shown in figure 4 (periodic rectangular pulse).", marks: 10, is_common_important: false, all_semesters: ["Spring 2023"] },
+            { id: "Q-33", text: "Find the Fourier series of the waveform shown in figure 5 (triangular waveform).", marks: 10, is_common_important: false, all_semesters: ["Spring 2023"] },
+        ];
+
+        // Global state and initialization data
+        const themeCycle = ['theme-black', 'theme-red', 'theme-light'];
+        let currentThemeIndex = 0;
+
+        const uniqueMarks = [...new Set(initialQuestions.map(q => q.marks))].sort((a, b) => a - b);
+        const uniqueSemesters = [...new Set(initialQuestions.flatMap(q => q.all_semesters))].sort().reverse();
+
+        /**
+         * Creates a stylized SVG placeholder for questions requiring a figure.
+         * @returns {string} The HTML string for the figure placeholder.
+         */
+        function createImagePlaceholder() {
+            return `
+                <div class="mt-3 mb-4 p-4 border-2 border-dashed border-card rounded-xl bg-gray-500/10 flex flex-col items-center justify-center text-center opacity-70">
+                    <svg class="w-10 h-10 text-main" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L14 16m-2-4l3.293-3.293a2 2 0 012.828 0L20 12m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                    </svg>
+                    <p class="text-xs mt-1 text-main font-semibold">Figure/Diagram Required (Placeholder)</p>
+                </div>
+            `;
+        }
+
+        /**
+         * Creates the HTML string for a single question card.
+         * @param {object} question The question object.
+         * @returns {string} The HTML string for the card.
+         */
+        function createQuestionCardHTML(question) {
+            const isImportant = question.is_common_important;
+            const ringClass = isImportant ? 'ring-important' : 'ring-1 ring-transparent';
+
+            // Check if the question text suggests a figure is needed
+            const requiresFigure = /(figure|fig|diagram|shown|depicted)/i.test(question.text);
+
+            const importantTag = isImportant ? `
+                <div class="flex items-center space-x-1 px-3 py-1 rounded-full shadow-md bg-important text-important-fg">
+                    <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M12 2l3.09 6.26l6.91 1l-5 4.87l1.18 6.88l-6.18-3.25l-6.18 3.25l1.18-6.88l-5-4.87l6.91-1z" /></svg>
+                    <span class="text-xs font-bold uppercase">Common & Important</span>
+                </div>` : '';
+
+            // FIX: Ensure template literal is used inside map callback
+            const semesterTags = question.all_semesters.map(semester => {
+                const tagClasses = isImportant
+                    ? 'bg-important text-important-fg border border-important-fg'
+                    : 'bg-gray-200 text-gray-800 dark:bg-gray-700 dark:text-gray-200';
+                return `<span class="text-xs font-mono px-2 py-0.5 rounded-full ${tagClasses}">${semester}</span>`;
+            }).join('');
+
+            return `
+                <div class="p-5 rounded-xl shadow-custom transition-all duration-300 bg-card border-card border-2 ${ringClass} hover:shadow-2xl hover:scale-[1.01] flex flex-col space-y-3">
+                    <!-- Header: Marks and Important Tag -->
+                    <div class="flex justify-between items-start border-b pb-3 border-card">
+                        <div class="flex items-center space-x-2 p-1 px-3 rounded-full shadow-lg bg-accent text-accent">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2l4-4m6 2a9 9 0 11-18 0a9 9 0 0118 0z"></path></svg>
+                            <span class="text-sm font-semibold">Marks: ${question.marks}</span>
+                        </div>
+                        ${importantTag}
+                    </div>
+
+                    <!-- Question Text & Placeholder -->
+                    <!-- Added math-element class for auto-rendering KaTeX -->
+                    <div class="text-main flex-grow text-lg font-medium tracking-tight text-justify overflow-x-auto question-text">
+                        <p class="font-bold mb-2">Q${question.id}:</p>
+                        <p class="math-element">${question.text}</p>
+                        ${requiresFigure ? createImagePlaceholder() : ''}
+                    </div>
+
+                    <!-- Footer: Semester Years -->
+                    <div class="pt-3 border-t border-card flex flex-col space-y-1">
+                        <h4 class="text-sm font-bold opacity-90 ${isImportant ? 'text-important-fg' : 'text-main'}">
+                            <svg class="w-4 h-4 inline-block mr-1 align-sub" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0a9 9 0 0118 0z"></path></svg>
+                            Appeared in Semesters:
+                        </h4>
+                        <div class="flex flex-wrap gap-2">
+                            ${semesterTags}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        /**
+         * Filters, sorts, and renders the questions to the DOM based on all active filters.
+         */
+        function filterAndRender() {
+            const searchText = document.getElementById('search-input').value.toLowerCase();
+            const marksFilter = document.getElementById('marks-filter').value;
+            const semesterFilter = document.getElementById('semester-filter').value;
+
+            const container = document.getElementById('questions-container');
+            const resultsTitle = document.getElementById('results-title');
+            const noResults = document.getElementById('no-results');
+
+            let filtered = initialQuestions.filter(q => {
+                // 1. Search Filter
+                const searchMatch = searchText === '' || q.text.toLowerCase().includes(searchText) || q.id.toLowerCase().includes(searchText);
+
+                // 2. Marks Filter
+                const marksMatch = marksFilter === 'all' || q.marks.toString() === marksFilter;
+
+                // 3. Semester Filter
+                const semesterMatch = semesterFilter === 'all' || q.all_semesters.includes(semesterFilter);
+
+                return searchMatch && marksMatch && semesterMatch;
+            });
+
+            // Sort: Common/Important first, then by marks (desc), then ID
+            filtered.sort((a, b) => {
+                if (a.is_common_important !== b.is_common_important) {
+                    return a.is_common_important ? -1 : 1;
+                }
+                if (b.marks !== a.marks) {
+                    return b.marks - a.marks;
+                }
+                return a.id.localeCompare(b.id);
+            });
+
+            container.innerHTML = filtered.map(createQuestionCardHTML).join('');
+
+            // FIX: Use template literal for textContent update
+            resultsTitle.textContent = `Displaying ${filtered.length} out of ${initialQuestions.length} Questions`;
+
+            if (filtered.length === 0) {
+                noResults.classList.remove('hidden');
+            } else {
+                noResults.classList.add('hidden');
+            }
+
+            // Manually trigger KaTeX rendering on the newly created elements
+            if (typeof renderMathInElement !== 'undefined') {
+                document.querySelectorAll('.math-element').forEach(el => renderMathInElement(el, {
+                    delimiters: [
+                        { left: '$$', right: '$$', display: true },
+                        { left: '$', right: '$', display: false }
+                    ],
+                    throwOnError: false
+                }));
+            }
+        }
+
+        /**
+         * Cycles through the available themes.
+         */
+        function toggleTheme() {
+            const body = document.body;
+
+            // Remove current theme class
+            body.classList.remove(themeCycle[currentThemeIndex]);
+
+            // Cycle index
+            currentThemeIndex = (currentThemeIndex + 1) % themeCycle.length;
+
+            // Apply new theme class
+            body.classList.add(themeCycle[currentThemeIndex]);
+
+            // Re-render to ensure dynamic styling (like important tag background) refreshes
+            filterAndRender();
+        }
+
+        /**
+         * Populates the Marks and Semester dropdowns.
+         */
+        function populateFilters() {
+            const marksFilter = document.getElementById('marks-filter');
+            uniqueMarks.forEach(marks => {
+                const option = document.createElement('option');
+                option.value = marks;
+                option.textContent = `${marks} Marks`;
+                marksFilter.appendChild(option);
+            });
+            marksFilter.addEventListener('change', filterAndRender);
+
+            const semesterFilter = document.getElementById('semester-filter');
+            uniqueSemesters.forEach(semester => {
+                const option = document.createElement('option');
+                option.value = semester;
+                option.textContent = semester;
+                semesterFilter.appendChild(option);
+            });
+            semesterFilter.addEventListener('change', filterAndRender);
+        }
+
+        // --- Initialization ---
+        document.addEventListener('DOMContentLoaded', () => {
+            // Apply initial theme class (theme-black is default in HTML structure)
+            document.body.classList.add(themeCycle[currentThemeIndex]);
+
+            // Set up event listeners
+            document.getElementById('search-input').addEventListener('input', filterAndRender);
+            document.getElementById('theme-toggle').addEventListener('click', toggleTheme);
+
+            // Populate filters and run initial render
+            populateFilters();
+            filterAndRender();
+        });
+    </script>
+</body>
+
+</html>
